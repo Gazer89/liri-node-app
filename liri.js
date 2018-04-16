@@ -10,7 +10,7 @@ var fs = require('fs');
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 
-var userInput = (process.argv[2]);
+var userInput = process.argv[2];
 
 switch (userInput) {
     case 'my-tweets':
@@ -40,7 +40,7 @@ switch (userInput) {
                     return console.log('Error occurred: ' + error);
                 }
                 else {
-                    for (i=0; i<tweets.statuses.length; i++) {
+                    for (i=0; i < tweets.statuses.length; i++) {
                     console.log("------------------------------------------------------------")
                     console.log(tweets.statuses[i].created_at + ": "+ tweets.statuses[i].text);
                     }
@@ -72,11 +72,18 @@ switch (userInput) {
                 var songName = data.tracks.items[0].name; 
                 var previewLink = data.tracks.items[0].preview_url;
                 var album = data.tracks.items[0].album.name;
+                    if (previewLink === null){
+                        previewLink = "Sorry, no preview avalible!"
+                    }
+                    else {
+                        previewLink = data.tracks.items[0].preview_url;
+                    }
                 console.log("------------------------------------------------------------")
                 console.log("Artist Name: " + artistName);
                 console.log("Song Title: " + songName);
                 console.log("Preview Link: " + previewLink);
                 console.log("Album Name: " + album);
+                // console.log(data.tracks.items)
                 }   
         });
     }
@@ -97,22 +104,29 @@ switch (userInput) {
         }
         request(queryMovie, function (error, response, body) {
             var moiveResult = JSON.parse(body);
+            var rateings;
+                if (moiveResult.Ratings.length != 3 ){
+                    rateings = "Splat, no Rotten Tomatto rateing!";
+                }
+                else {
+                    rateings = moiveResult.Ratings[1].Value;
+                }
             console.log("------------------------------------------------------------")
             console.log('Title:', moiveResult.Title); 
             console.log('Year:', moiveResult.Year); 
             console.log('IMDB Rateing:', moiveResult.imdbRating); 
-            console.log('Rotten Tomattos Rateing:', moiveResult.Ratings[1].Value); 
+            console.log('Rotten Tomattos Rateing:', rateings); 
             console.log('Contry Produced In:', moiveResult.Country); 
             console.log('Language:', moiveResult.Language); 
             console.log('Plot:', moiveResult.Plot); 
             console.log('Actors:', moiveResult.Actors); 
+            // console.log(moiveResult);
         });
     }
 
 //fs function to run random command
 function rand (){
     fs.readFile("random.txt", "utf8", function(err, data) {
-        // If there's an error reading the textFile, we log it and return immediately
         if (err) {
         return console.log(err);
             }
@@ -125,4 +139,3 @@ function rand (){
         });
     }
 
-    
